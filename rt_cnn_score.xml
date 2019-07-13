@@ -1,0 +1,129 @@
+<project name="rt_cnn_score" pubsub="auto" threads="1" heartbeat-interval="1">
+  <description><![CDATA[human smile detection]]></description>
+  <metadata>
+    <meta id="studioUploadedBy">sasboot</meta>
+    <meta id="studioUploaded">1530819673253</meta>
+    <meta id="studioModifiedBy">sasboot</meta>
+    <meta id="studioModified">1530820056422</meta>
+    <meta id="studioTags">CNN, AI</meta>
+    <meta id="layout">{"contquery":{"resized":{"x":45,"y":180},"w_data":{"x":40,"y":60},"w_reader":{"x":50,"y":420},"w_request":{"x":50,"y":540},"w_score":{"x":50,"y":310}}}</meta>
+  </metadata>
+  <contqueries>
+    <contquery name="contquery">
+      <windows>
+        <window-calculate algorithm="ImageProcessing" pubsub="true" name="resized">
+          <schema>
+            <fields>
+              <field name="id" type="int64" key="true"/>
+              <field name="_image_" type="blob"/>
+            </fields>
+          </schema>
+          <parameters>
+            <properties>
+              <property name="function"><![CDATA[
+                                        resize
+                                    ]]></property>
+              <property name="preFlip"><![CDATA[
+                                        -1000
+                                    ]]></property>
+              <property name="x"><![CDATA[0
+                                    ]]></property>
+              <property name="y"><![CDATA[0]]></property>
+              <property name="width"><![CDATA[28]]></property>
+              <property name="height"><![CDATA[28]]></property>
+              <property name="outputWidth"><![CDATA[0
+                                    ]]></property>
+              <property name="outputHeight"><![CDATA[0]]></property>
+              <property name="alpha"><![CDATA[0.0]]></property>
+              <property name="beta"><![CDATA[0.0
+                                    ]]></property>
+              <property name="delta"><![CDATA[
+                                        0.0
+                                    ]]></property>
+              <property name="theta"><![CDATA[0.0]]></property>
+              <property name="value"><![CDATA[
+                                        0.0
+                                    ]]></property>
+              <property name="minValue"><![CDATA[
+                                        0.0
+                                    ]]></property>
+              <property name="maxValue"><![CDATA[0.0
+                                    ]]></property>
+              <property name="type"><![CDATA[0.0
+                                    ]]></property>
+              <property name="flag1"><![CDATA[0.0]]></property>
+              <property name="flag2"><![CDATA[0.0
+                                    ]]></property>
+              <property name="flag3"><![CDATA[
+                                        0.0
+                                    ]]></property>
+              <property name="flag4"><![CDATA[0.0]]></property>
+              <property name="flag5"><![CDATA[0.0
+                                    ]]></property>
+            </properties>
+          </parameters>
+          <input-map>
+            <properties>
+              <property name="imageInput"><![CDATA[image]]></property>
+            </properties>
+          </input-map>
+          <output-map>
+            <properties>
+              <property name="imageOutput"><![CDATA[_image_]]></property>
+            </properties>
+          </output-map>
+        </window-calculate>
+        <window-source index="pi_EMPTY" insert-only="true" pubsub="true" name="w_data">
+          <schema>
+            <fields>
+              <field name="id" type="int64" key="true"/>
+              <field name="image" type="blob"/>
+            </fields>
+          </schema>
+        </window-source>
+        <window-model-reader name="w_reader" pubsub="true" model-type="astore"/>
+        <window-source index="pi_EMPTY" insert-only="true" pubsub="true" name="w_request">
+          <schema>
+            <fields>
+              <field key="true" name="req_id" type="int64"/>
+              <field key="false" name="req_key" type="string"/>
+              <field key="false" name="req_val" type="string"/>
+            </fields>
+          </schema>
+        </window-source>
+        <window-score name="w_score" pubsub="true">
+          <schema>
+            <fields>
+              <field name="id" type="int64" key="true"/>
+              <field name="I__label_" type="string"/>
+              <field name="P__label_not_smiling" type="double"/>
+              <field name="P__label_smiling" type="double"/>
+            </fields>
+          </schema>
+          <models>
+            <offline model-type="astore">
+              <input-map>
+                <properties>
+                  <property name="_image_"><![CDATA[_image_]]></property>
+                </properties>
+              </input-map>
+              <output-map>
+                <properties>
+                  <property name="P__label_not_smiling"><![CDATA[P__label_not_smiling]]></property>
+                  <property name="P__label_smiling"><![CDATA[P__label_smiling]]></property>
+                  <property name="I__label_"><![CDATA[I__label_]]></property>
+                </properties>
+              </output-map>
+            </offline>
+          </models>
+        </window-score>
+      </windows>
+      <edges>
+        <edge role="data" source="w_data" target="resized"/>
+        <edge role="data" source="resized" target="w_score"/>
+        <edge role="request" source="w_request" target="w_reader"/>
+        <edge role="model" source="w_reader" target="w_score"/>
+      </edges>
+    </contquery>
+  </contqueries>
+</project>

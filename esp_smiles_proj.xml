@@ -1,0 +1,156 @@
+<engine>
+    <projects>
+        <project name="rt_cnn_score" pubsub="auto" threads="1">
+            <contqueries>
+                <contquery name="contquery">
+                    <windows>
+                        <window-calculate algorithm="ImageProcessing" name="resized">
+                            <schema>
+                                <fields>
+                                    <field key="true" name="id" type="int64"/>
+                                    <field key="false" name="_image_"
+                                           type="blob"/>
+                                </fields>
+
+                            </schema>
+
+                            <parameters>
+                                <properties>
+                                    <property name="alpha">0.0</property>
+                                    <property
+                                            name="beta">0.0
+                                    </property>
+                                    <property name="delta">
+                                        0.0
+                                    </property>
+                                    <property name="flag1">0.0</property>
+                                    <property
+                                            name="flag2">0.0
+                                    </property>
+                                    <property name="flag3">
+                                        0.0
+                                    </property>
+                                    <property name="flag4">0.0</property>
+                                    <property
+                                            name="flag5">0.0
+                                    </property>
+                                    <property name="function">
+                                        resize
+                                    </property>
+                                    <property name="height">28</property>
+                                    <property
+                                            name="maxValue">0.0
+                                    </property>
+                                    <property name="minValue">
+                                        0.0
+                                    </property>
+                                    <property name="outputHeight">0</property>
+                                    <property
+                                            name="outputWidth">0
+                                    </property>
+                                    <property name="preFlip">
+                                        -1000
+                                    </property>
+                                    <property name="theta">0.0</property>
+                                    <property
+                                            name="type">0.0
+                                    </property>
+                                    <property name="value">
+                                        0.0
+                                    </property>
+                                    <property name="width">28</property>
+                                    <property
+                                            name="x">0
+                                    </property>
+                                    <property name="y">0</property>
+                                </properties>
+
+                            </parameters>
+
+                            <input-map>
+                                <properties>
+                                    <property name="imageInput">image</property>
+                                </properties>
+
+                            </input-map>
+
+                            <output-map>
+                                <properties>
+                                    <property name="imageOutput">_image_</property>
+                                </properties>
+
+                            </output-map>
+
+                        </window-calculate>
+
+                        <window-source index="pi_EMPTY" insert-only="true" name="w_data">
+                            <schema>
+                                <fields>
+                                    <field key="true" name="id" type="int64"/>
+                                    <field key="false" name="image"
+                                           type="blob"/>
+                                </fields>
+
+                            </schema>
+
+                        </window-source>
+                        <window-model-reader name="w_reader"/>
+                        <window-source index="pi_EMPTY" insert-only="true" name="w_request">
+                            <schema>
+                                <fields>
+                                    <field key="true" name="req_id" type="int64"/>
+                                    <field key="false"
+                                           name="req_key"
+                                           type="string"/>
+                                    <field
+                                            key="false" name="req_val" type="string"/>
+                                </fields>
+
+                            </schema>
+
+                        </window-source>
+
+                        <window-score name="w_score">
+                            <schema>
+                                <fields>
+                                    <field key="true" name="id" type="int64"/>
+                                    <field key="false"
+                                           name="I__label_"
+                                           type="string"/>
+                                    <field
+                                            key="false" name="P__label_not_smiling" type="double"/>
+                                    <field key="false"
+                                           name="P__label_smiling"
+                                           type="double"/>
+
+                                </fields>
+
+                            </schema>
+
+                            <models>
+                                <offline model-type="astore"/>
+                            </models>
+
+                        </window-score>
+
+                    </windows>
+
+                    <edges>
+                        <edge role="data" source="w_data" target="resized"/>
+                        <edge role="data" source="resized"
+                              target="w_score"/>
+                        <edge
+                                role="request" source="w_request" target="w_reader"/>
+                        <edge role="model" source="w_reader"
+                              target="w_score"/>
+                    </edges>
+
+                </contquery>
+
+            </contqueries>
+
+        </project>
+
+    </projects>
+
+</engine>
